@@ -18,9 +18,9 @@ func GetPhoneNumber(appid, sessionKey, iv, encryptedData string) (r *PhoneNumber
 }
 
 type PhoneNumberResult struct {
-	PhoneNumber     string `json:"phoneNumber"`
-	PurePhoneNumber string `json:"purePhoneNumber"`
-	CountryCode     string `json:"countryCode"`
+	PhoneNumber     string `json:"phoneNumber"`     //用户绑定的手机号（国外手机号会有区号）
+	PurePhoneNumber string `json:"purePhoneNumber"` //没有区号的手机号
+	CountryCode     string `json:"countryCode"`     //区号
 }
 
 func (o *PhoneNumberResult) JSON() string {
