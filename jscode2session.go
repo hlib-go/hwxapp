@@ -13,7 +13,7 @@ import (
 
 // 登录凭证校验。通过 wx.login 接口获得临时登录凭证 code 后传到开发者服务器调用此接口完成登录流程。
 func Jscode2session(cfg *Config, code string) (r *Jscode2sessionResult, err error) {
-	resp, err := http.Get(fmt.Sprintf("GET https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", cfg.Appid, cfg.Secret, code))
+	resp, err := http.Get(fmt.Sprintf("https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code", cfg.Appid, cfg.Secret, code))
 	if err != nil {
 		return
 	}
