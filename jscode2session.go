@@ -2,9 +2,11 @@ package hwxapp
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
 // https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/login/auth.code2Session.html
@@ -23,6 +25,10 @@ func Jscode2session(cfg *Config, code string) (r *Jscode2sessionResult, err erro
 	if err != nil {
 		return
 	}
+	if r.Errcode != 0 {
+		err = errors.New(strconv.FormatInt(r.Errcode, 10) + ":" + r.Errmsg)
+		return
+	}
 	return
 }
 
@@ -30,6 +36,14 @@ type Jscode2sessionResult struct {
 	Openid     string `json:"openid"`
 	SessionKey string `json:"session_key"`
 	Unionid    string `json:"unionid"`
-	Errcode    string `json:"errcode"`
+	Errcode    int64  `json:"errcode"`
 	Errmsg     string `json:"errmsg"`
 }
+
+/*
+errcode 的合法值
+-1	系统繁忙，此时请开发者稍候再试
+0	请求成功
+40029	code 无效
+45011	频率限制，每个用户每分钟100次
+*/

@@ -4,6 +4,8 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
+	"errors"
+	"strings"
 )
 
 // https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/signature.html
@@ -20,30 +22,40 @@ import (
 另外，为了应用能校验数据的有效性，会在敏感数据加上数据水印( watermark )
 */
 
-// 后台校验与解密开放数据
-func DecryptAesCbcPKCS7(sessionKey, iv string, encryptedData string) (oriData []byte, err error) {
+// AES CBC PKCS7
+// 微信小程序返回密文解密
+func DecryptData(appid, sessionKey, encryptedData, iv string) (oriData []byte, err error) {
 	// Base64 解码
 	sessionKeyBytes, err := base64.StdEncoding.DecodeString(sessionKey)
 	if err != nil {
+		err = errors.New("sessionKey base64 解码错误")
 		return
 	}
 	ivBytes, err := base64.StdEncoding.DecodeString(iv)
 	if err != nil {
+		err = errors.New("iv base64 解码错误")
 		return
 	}
 	encryptedDataBytes, err := base64.StdEncoding.DecodeString(encryptedData)
 	if err != nil {
+		err = errors.New("encryptedData base64 解码错误")
 		return
 	}
 
 	block, err := aes.NewCipher(sessionKeyBytes)
 	if err != nil {
+		err = errors.New("Aes Cipher Error " + err.Error())
 		return
 	}
 	blockMode := cipher.NewCBCDecrypter(block, ivBytes)
 	oriData = make([]byte, len(encryptedDataBytes))
 	blockMode.CryptBlocks(oriData, encryptedDataBytes)
 	oriData = PKCS7UnPadding(oriData)
+
+	if !strings.Contains(string(oriData), appid) {
+		err = errors.New("Illegal encryptedData")
+		return
+	}
 	return
 }
 
