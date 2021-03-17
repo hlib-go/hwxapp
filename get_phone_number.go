@@ -5,8 +5,8 @@ import (
 )
 
 // 解密小程序返回的密文手机号  https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html
-func GetPhoneNumber(conf *Config, sessionKey, iv, encryptedData string) (r *PhoneNumberResult, err error) {
-	rbytes, err := DecryptData(conf.Appid, sessionKey, encryptedData, iv)
+func GetPhoneNumber(appid, sessionKey, iv, encryptedData string) (r *PhoneNumberResult, err error) {
+	rbytes, err := DecryptData(appid, sessionKey, encryptedData, iv)
 	if err != nil {
 		return
 	}

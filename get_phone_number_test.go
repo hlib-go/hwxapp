@@ -6,7 +6,7 @@ import (
 
 func TestGetPhoneNumber(t *testing.T) {
 
-	r, err := GetPhoneNumber(nil, "", "", "")
+	r, err := GetPhoneNumber("", "", "", "")
 	if err != nil {
 		t.Error(err)
 		return
